@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gui.hospital.mapper.HospitalDepartmentMapper">
+    <resultMap id="resultHospitalDepartment" type="com.gui.hospital.model.HospitalDepartment">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <collection property="children" ofType="com.gui.hospital.model.HospitalDepartment">
+            <id property="id" column="subordinate_id"/>
+            <result property="name" column="subordinate_name"/>
+        </collection>
+    </resultMap>
+
+    <select id="findByHospitalId" resultMap="resultHospitalDepartment" parameterType="int">
+        SELECT
+            t1.id AS id,
+            t1.name AS `name`,
+            t2.id AS subordinate_id,
+            t2.name AS subordinate_name
+        FROM `tb_hospital_department`  t1
+                 LEFT JOIN `tb_hospital_department` t2 ON t1.id = t2.pid
+        WHERE t1.hospital_id = #{hospitalId} AND t1.pid = 0
+    </select>
+
+
+</mapper>
